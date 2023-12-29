@@ -9,7 +9,7 @@ from torch_geometric.loader import NeighborLoader
 
 
 # Import Reddit
-dataset = Reddit(root="/dfs6/pub/seminl1/Reddit", transform=T.ToSparseTensor())
+dataset = Reddit(root="/home/semin/gnn/dataset/Reddit", transform=T.ToSparseTensor())
 data = dataset[0]
 data = data.pin_memory()
 
@@ -55,6 +55,7 @@ start = torch.cuda.Event(enable_timing=True)
 end = torch.cuda.Event(enable_timing=True)
 gcn = GCN()
 
+
 # NeighborLoader
 train_loader = NeighborLoader(
         data,
@@ -64,9 +65,11 @@ train_loader = NeighborLoader(
         #num_workers=16,
 )
 
+
 # Sleep for 10 seconds to execute monitoring system
 time.sleep(10)
 print('Training Start!')
+
 
 # Training
 start.record()

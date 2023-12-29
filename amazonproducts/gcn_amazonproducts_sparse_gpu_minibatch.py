@@ -9,7 +9,7 @@ from torch_geometric.loader import NeighborLoader
 
 
 # Import AmazonProducts
-dataset = AmazonProducts(root="/dfs6/pub/seminl1/AmazonProducts", transform=T.ToSparseTensor())
+dataset = AmazonProducts(root="/home/semin/gcc/dataset/AmazonProducts", transform=T.ToSparseTensor())
 data = dataset[0]
 data.y = torch.argmax(data.y, dim=1)
 data = data.pin_memory()
@@ -56,18 +56,21 @@ start = torch.cuda.Event(enable_timing=True)
 end = torch.cuda.Event(enable_timing=True)
 gcn = GCN()
 
+
 # NeighborLoader
 train_loader = NeighborLoader(
         data,
         num_neighbors=[-1],
         batch_size=131072,
         pin_memory=True,
-        num_workers=8,
+        num_workers=32,
 )
+
 
 # Sleep for 10 seconds to execute monitoring system
 time.sleep(10)
 print('Training Start!')
+
 
 # Training
 start.record()

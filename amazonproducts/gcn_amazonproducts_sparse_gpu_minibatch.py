@@ -9,7 +9,7 @@ from torch_geometric.loader import NeighborLoader
 
 
 # Import AmazonProducts
-dataset = AmazonProducts(root="/home/semin/gcc/dataset/AmazonProducts", transform=T.ToSparseTensor())
+dataset = AmazonProducts(root="/mnt/ephemeral/gnn/dataset/AmazonProducts", transform=T.ToSparseTensor())
 data = dataset[0]
 data.y = torch.argmax(data.y, dim=1)
 data = data.pin_memory()
@@ -35,7 +35,7 @@ def accuracy(pred_y, y):
 def train(model, train_loader):
     criterion = torch.nn.CrossEntropyLoss().cuda()
     optimizer = model.optimizer
-    epochs = 10
+    epochs = 5
 
     model.train()
     for epoch in range(epochs):
@@ -63,7 +63,7 @@ train_loader = NeighborLoader(
         num_neighbors=[-1],
         batch_size=131072,
         pin_memory=True,
-        num_workers=32,
+        num_workers=8,
 )
 
 

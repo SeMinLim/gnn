@@ -9,7 +9,7 @@ from torch_geometric.loader import NeighborLoader
 
 
 # Import AmazonProducts
-dataset = AmazonProducts(root="/home/semin/gnn/dataset/AmazonProducts", transform=T.ToSparseTensor())
+dataset = AmazonProducts(root="/mnt/ephemeral/gnn/dataset/AmazonProducts", transform=T.ToSparseTensor())
 data = dataset[0]
 data.y = torch.argmax(data.y, dim=1)
 data = data.pin_memory()

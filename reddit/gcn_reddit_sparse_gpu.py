@@ -9,7 +9,7 @@ from torch_geometric.loader import NeighborLoader
 
 
 # Import Reddit
-dataset = Reddit(root="/home/semin/gnn/dataset/Reddit", transform=T.ToSparseTensor())
+dataset = Reddit(root="/mnt/ephemeral/gnn/dataset/Reddit", transform=T.ToSparseTensor())
 data = dataset[0]
 data = data.pin_memory()
 

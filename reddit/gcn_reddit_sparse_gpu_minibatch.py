@@ -9,7 +9,7 @@ from torch_geometric.loader import NeighborLoader
 
 
 # Import Reddit
-dataset = Reddit(root="/home/semin/gnn/dataset/Reddit", transform=T.ToSparseTensor())
+dataset = Reddit(root="/mnt/ephemeral/gnn/dataset/Reddit", transform=T.ToSparseTensor())
 data = dataset[0]
 data = data.pin_memory()
 
@@ -34,7 +34,7 @@ def accuracy(pred_y, y):
 def train(model, train_loader):
     criterion = torch.nn.CrossEntropyLoss().cuda()
     optimizer = model.optimizer
-    epochs = 100
+    epochs = 10
 
     model.train()
     for epoch in range(epochs):

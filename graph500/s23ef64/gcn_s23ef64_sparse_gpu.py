@@ -8,7 +8,7 @@ from torch_geometric.loader import NeighborLoader
 
 
 # Import Graph500_Scale23_EdgeFactor64
-data = torch.load("/dfs6/pub/seminl1/graph500/graph500_scale23_ef64.pt")
+data = torch.load("/mnt/ephemeral/gnn/dataset/Graph500/graph500_scale23_ef64.pt")
 data = T.ToSparseTensor()(data)
 data = data.pin_memory()
 
@@ -33,7 +33,7 @@ def accuracy(pred_y, y):
 def train(model, data):
     criterion = torch.nn.CrossEntropyLoss().cuda()
     optimizer = model.optimizer
-    epochs = 100
+    epochs = 10
 
     model.train()
     for epoch in range(epochs):
@@ -52,9 +52,11 @@ start = torch.cuda.Event(enable_timing=True)
 end = torch.cuda.Event(enable_timing=True)
 gcn = GCN()
 
+
 # Sleep for 10 seconds to execute monitoring system
 time.sleep(10)
 print('Training Start!')
+
 
 # Training
 start.record()

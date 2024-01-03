@@ -4,14 +4,12 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 
 from torch_geometric.nn import GCNConv
-from torch_geometric.datasets import AmazonProducts
 from torch_geometric.loader import NeighborLoader
 
 
-# Import AmazonProducts
-dataset = AmazonProducts(root="/mnt/ephemeral/gnn/dataset/AmazonProducts", transform=T.ToSparseTensor())
-data = dataset[0]
-data.y = torch.argmax(data.y, dim=1)
+# Import Graph500_Scale24_EdgeFactor64
+data = torch.load("/mnt/ephemeral/gnn/dataset/Graph500/graph500_scale24_ef64.pt")
+data = T.ToSparseTensor()(data)
 data = data.pin_memory()
 
 
@@ -19,7 +17,7 @@ data = data.pin_memory()
 class GCN(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.gcn1 = GCNConv(dataset.num_features, dataset.num_classes)
+        self.gcn1 = GCNConv(64, 64)
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.02)
 
     def forward(self, x, adj_t):
@@ -63,7 +61,7 @@ train_loader = NeighborLoader(
         num_neighbors=[-1],
         batch_size=131072,
         pin_memory=True,
-        num_workers=32,
+        num_workers=8,
 )
 
 

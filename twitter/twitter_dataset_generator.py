@@ -145,8 +145,8 @@ print('2D Undirected Edges Tensor (Dense):', edges.shape, flush=True)
 
 # Change edge_index to sparse
 edges = SparseTensor(
-        row=edges[1],
-        col=edges[0],
+        row=edges[0],
+        col=edges[1],
         sparse_sizes=(41652230, 41652230),
         is_sorted=True,
         trust_data=True,)

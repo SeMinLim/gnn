@@ -8,7 +8,7 @@ from torch_geometric.loader import NeighborLoader
 
 
 # Import Twitter Dataset
-data = torch.load("/mnt/ephemeral/gnn/dataset/Twitter/twitter.pt")
+data = torch.load("/mnt/ephemeral/gnn/dataset/Twitter/twitter_sparse.pt")
 data = data.pin_memory()
 
 
@@ -58,14 +58,14 @@ gcn = GCN()
 train_loader = NeighborLoader(
         data,
         num_neighbors=[-1],
-        batch_size=131072,
+        batch_size=262144,
         pin_memory=True,
-        num_workers=8,
+        num_workers=16,
 )
 
 
 # Sleep for 10 seconds to execute monitoring system
-#time.sleep(10)
+time.sleep(5)
 print('Training Start!')
 
 

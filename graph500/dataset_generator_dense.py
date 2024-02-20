@@ -9,7 +9,7 @@ from torch_geometric.typing import SparseTensor
 
 
 # Node setting
-numNodes = 8388608 #S23 
+numNodes = 33554432 #S25
 
 
 # PyTorch availability and GPU checking
@@ -20,7 +20,7 @@ print('The Current GPU Name:', torch.cuda.get_device_name(0), flush=True)
 
 
 # Read the file and store the dataset
-file = open("/mnt/ephemeral/gnn/dataset/Graph500/s23ef64/graph500_scale23_ef64.edges", "rb")
+file = open("/mnt/ephemeral/gnn/dataset/Graph500/s25ef64/graph500_scale25_ef64.edges", "rb")
 
 edges = []
 while True:
@@ -110,10 +110,23 @@ y = torch.tensor(y, dtype=torch.int64)
 print('1D Ground-Truth Label Tensor:', y.shape, flush=True)
 
 
+## Train Mask
+# Make train mask by our own
+train_mask=[]
+for i in range(numNodes):
+    t = random.choice([True, False])
+    train_mask.append(t)
+
+# Make train mask as tensor for using it on PyTorch Geometric
+# dtype should be torch.bool
+train_mask = torch.tensor(train_mask, dtype=torch.bool)
+print('1D Train Mask Tensor:', train_mask.shape, flush=True)
+
+
 ## Save the dataset as .pt
 # Make node feature matrix, edge index, ground-truth labels as PyTorch Dataset
-data = Data(x=x, edge_index=edges, y=y)
+data = Data(x=x, edge_index=edges, y=y, train_mask=train_mask)
 print(data, flush=True)
 
 # Save the data
-torch.save(data, "/mnt/ephemeral/gnn/dataset/Graph500/s23ef64/graph500_scale23_ef64_dense.pt")
+torch.save(data, "/mnt/ephemeral/gnn/dataset/Graph500/s25ef64/graph500_scale25_ef64_dense.pt")

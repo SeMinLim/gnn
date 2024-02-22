@@ -29,6 +29,10 @@ def read_file_until_tab_newline(file):
         return buffer
 
 
+# Node setting
+numNodes = 41652230
+
+
 # PyTorch availability and GPU checking
 print('PyTorch Availability:', torch.cuda.is_available(), flush=True)
 print('The Number of GPUs:', torch.cuda.device_count(), flush=True)
@@ -73,7 +77,7 @@ print('2D Directed Edge Array (Dense):', edges.shape, flush=True)
 
 # Generate the modified node
 m_nodes=[]
-for i in range(41652230):
+for i in range(numNodes):
     m_nodes.append(i)
 
 m_nodes = np.array(m_nodes)
@@ -86,10 +90,9 @@ print('Sorting 2D Directed Edge Array by Column 1 Done!', flush=True)
 
 # Change the original nodes to modified nodes (Phase 1)
 num_edges = 1468365182
-num_nodes = 41652230
 pointer = 0
 for i in range(num_edges):
-    for j in range(pointer, num_nodes):
+    for j in range(pointer, numNodes):
         if (edges[i][0] == nodes[j][0]):
             edges[i][0] = nodes[j][1]
             pointer = j
@@ -104,7 +107,7 @@ print('Sorting 2D Directed Edge Array by Column 2 Done!', flush=True)
 # Change the original nodes to modified nodes (Phase 2)
 pointer = 0
 for i in range(num_edges):
-    for j in range(pointer, num_nodes):
+    for j in range(pointer, numNodes):
         if (edges[i][1] == nodes[j][0]):
             edges[i][1] = nodes[j][1]
             pointer = j
@@ -131,7 +134,7 @@ print('2D Opposite Directed Edges Array (Dense):', opposite.shape, flush=True)
 
 # Merge the original and opposite edges
 edges = np.append(edges, opposite, axis=0)
-print('2D Undirected Edges Array (Dense):', edges.shape)
+print('2D Undirected Edges Array (Dense):', edges.shape, flush=True)
 
 # Delete duplicates of the edges
 edges = np.unique(edges, axis=0)
@@ -147,7 +150,7 @@ print('2D Undirected Edges Tensor (Dense):', edges.shape, flush=True)
 edges = SparseTensor(
         row=edges[0],
         col=edges[1],
-        sparse_sizes=(41652230, 41652230),
+        sparse_sizes=(numNodes, numNodes),
         is_sorted=True,
         trust_data=True,)
 print(edges, flush=True)
@@ -155,11 +158,11 @@ print(edges, flush=True)
 
 ## Node Feature Matrix
 # Make node feature matrix by our own
-# 41652230(#nodes) x 16(#features)
+# 41652230(#nodes) x 64(#features)
 x=[]
 tmp = []
-for i in range(41652230):
-    for j in range(16):
+for i in range(numNodes):
+    for j in range(64):
         r = random.uniform(-2.5, 2.5)
         while r in tmp:
             r = random.uniform(-2.5, 2.5)
@@ -171,7 +174,7 @@ for i in range(41652230):
 x = np.array(x)
 print('1D Node Feature Array:', x.shape, flush=True)
 # Reshape node feature matrix(numpy array) to 2-dimensional
-x = x.reshape(-1, 16)
+x = x.reshape(-1, 64)
 print('2D Node Feature Array:', x.shape, flush=True)
 
 # Make node feature matrix as tensor for using it on PyTorch Geometric
@@ -183,8 +186,8 @@ print('2D Node Feature Tensor:', x.shape, flush=True)
 ## Ground-Truth Labels
 # Make ground-truth labels by our own
 y=[]
-for i in range(41652230):
-    r = random.randrange(0, 16)
+for i in range(numNodes):
+    r = random.randrange(0, 64)
     y.append(r)
 
 # Make ground-truth lables as tensor for using it on PyTorch Geometric
@@ -193,10 +196,23 @@ y = torch.tensor(y, dtype=torch.int64)
 print('1D Ground-Truth Label Tensor:', y.shape, flush=True)
 
 
+## Train Mask
+# Make train mask by our own
+train_mask=[]
+for i in range(numNodes):
+    t = random.choice([True, False])
+    train_mask.append(t)
+
+# Make train mask as tensor for using it on PyTorch Geometric
+# dtype should be torch.bool
+train_mask = torch.tensor(train_mask, dtype=torch.bool)
+print('1D Train Mask Tensor:', train_mask.shape, flush=True)
+
+
 ## Save the dataset as .pt
 # Make node feature matrix, edge index, ground-truth labels as PyTorch Dataset
-data = Data(x=x, y=y, adj_t=edges)
+data = Data(x=x, y=y, train_mask=train_mask, adj_t=edges)
 print(data, flush=True)
 
 # Save the data
-torch.save(data, "/mnt/ephemeral/gnn/dataset/Twitter/twitter.pt")
+torch.save(data, "/mnt/ephemeral/gnn/dataset/Twitter/twitter_rv_sparse.pt")
